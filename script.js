@@ -602,36 +602,34 @@ const generateAPIResponse = async (incomingMessageDiv) => {
         }
 
         try {
-        const imageInfo = getImageType(userMessage);
-        if (imageInfo && !displayedImages.has(imageInfo.type)) {
-            displayedImages.add(imageInfo.type);
-            const messageElement = createMessageWithMedia(finalResponse, imageInfo.path); // Use finalResponse here
-            incomingMessageDiv.replaceWith(messageElement);
-            const newTextElement = messageElement.querySelector(".text");
-            newTextElement.textContent = '';
-            showTypingEffect(finalResponse, newTextElement, messageElement); // Use finalResponse here
-        } else {
-            showTypingEffect(finalResponse, textElement, incomingMessageDiv); // Use finalResponse here
-        }
-        
+    const imageInfo = getImageType(userMessage);
+    if (imageInfo && !displayedImages.has(imageInfo.type)) {
+        displayedImages.add(imageInfo.type);
+        const messageElement = createMessageWithMedia(finalResponse, imageInfo.path);
+        incomingMessageDiv.replaceWith(messageElement);
+        const newTextElement = messageElement.querySelector(".text");
+        newTextElement.textContent = '';
+        showTypingEffect(finalResponse, newTextElement, messageElement);
+    } else {
+        showTypingEffect(finalResponse, textElement, incomingMessageDiv);
+    }
 
-        updateConversationHistory({
-    role: "assistant",
-    content: apiResponse
-});
+    updateConversationHistory({
+        role: "assistant",
+        content: apiResponse
+    });
 
-    } catch (error) {
-        isResponseGenerating = false;
-        const customErrorMessage = getCustomErrorMessage(error);
-        textElement.innerText = customErrorMessage;
-        textElement.parentElement.closest(".message").classList.add("error");
-    } finally {
-        incomingMessageDiv.classList.remove("loading");
+} catch (error) {
+    isResponseGenerating = false;
+    const customErrorMessage = getCustomErrorMessage(error);
+    textElement.innerText = customErrorMessage;
+    textElement.parentElement.closest(".message").classList.add("error");
+} finally {
+    incomingMessageDiv.classList.remove("loading");
 
-        const answerIndicator = incomingMessageDiv.querySelector('.answer-indicator');
-        if (answerIndicator) {
-            answerIndicator.textContent = "Answer";
-        }
+    const answerIndicator = incomingMessageDiv.querySelector('.answer-indicator');
+    if (answerIndicator) {
+        answerIndicator.textContent = "Answer";
     }
 }
 
