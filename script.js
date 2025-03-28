@@ -6,6 +6,7 @@ let isDataLoaded = false;
 let displayedImages = new Set();
 let assetsLoaded = 0;
 let repositoryFiles = [];
+let conversationHistory = JSON.parse(localStorage.getItem("conversation-history")) || [];
 
 // Function to load the manifest and then load each file’s content
 const loadRepositoryFiles = async () => {
