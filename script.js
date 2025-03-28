@@ -16,33 +16,31 @@ const loadRepositoryFiles = async () => {
     if (!manifestResponse.ok) throw new Error('Failed to load repository-manifest.json');
 
     const manifestJSON = await manifestResponse.json();
-
-    // manifestJSON.files should be an array of file information
     const files = manifestJSON.files;
 
-    // For each file in the manifest, fetch its content
+    // Fetch each file’s content
     const fileFetchPromises = files.map(async (file) => {
       const response = await fetch(file.path);
       if (!response.ok) throw new Error(`Failed to load ${file.path}`);
-      
       const content = await response.text();
 
-      // Save the file data including a short preview (if desired)
       return {
         fileName: file.fileName,
-        content: content // you can also slice() if you want only a preview
+        content: content
       };
     });
 
     repositoryFiles = await Promise.all(fileFetchPromises);
     console.log('Repository files loaded:', repositoryFiles);
+
+    // Add this to mark data as loaded
+    isDataLoaded = true;
   } catch (error) {
     console.error('Error loading repository files:', error);
   }
 };
-
-// Call immediately (or during your app initialization)
 loadRepositoryFiles();
+
 
 document.addEventListener('DOMContentLoaded', () => {
   const progressBar = document.getElementById('install-progress');
