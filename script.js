@@ -602,20 +602,6 @@ const generateAPIResponse = async (incomingMessageDiv) => {
         }
 
         try {
-            const userIP = await getUserIP();
-            const timestamp = new Date().toISOString();
-
-            await addDoc(chatHistoryCollection, {
-                userIP,
-                timestamp,
-                message: userMessage,
-                response: finalResponse, // Use finalResponse here
-                philippinesTime: getPhilippinesTime()
-            });
-        } catch (error) {
-            console.error('Error storing chat history:', error);
-        }
-
         const imageInfo = getImageType(userMessage);
         if (imageInfo && !displayedImages.has(imageInfo.type)) {
             displayedImages.add(imageInfo.type);
