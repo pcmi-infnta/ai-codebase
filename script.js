@@ -599,7 +599,7 @@ const generateAPIResponse = async (incomingMessageDiv) => {
         if (userMessage.trim().toLowerCase() === "what is intentional discipleship?") {
             // Remove any trailing spaces or line breaks before adding signature
             finalResponse = finalResponse.trim() + " — It's all about Jesus!";
-        }
+        
 
         try {
     const imageInfo = getImageType(userMessage);
