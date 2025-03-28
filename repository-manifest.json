@@ -2,11 +2,11 @@
     "files": [
         {
             "fileName": "jj.js",
-            "path": "./jj.js"
+            "path": "repository/jj.js"
         },
         {
             "fileName": "index.html",
-            "path": "./index.html"
+            "path": "repository/index.html"
         }
     ]
 }
