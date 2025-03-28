@@ -1,9 +1,3 @@
-let conversationFlowRules = '';
-let aiRules = '';
-let churchKnowledge = '';
-let conversationHistory = [];
-let linkFormatRules = '';
-let taglishRules = '';
 let userIsScrolling = false;
 let areFollowUpsHidden = false;
 let userMessage = null;
@@ -11,8 +5,6 @@ let isResponseGenerating = false;
 let isDataLoaded = false; 
 let displayedImages = new Set();
 let assetsLoaded = 0;
-
-// Global array for storing repository files
 let repositoryFiles = [];
 
 // Function to load the manifest and then load each file’s content
@@ -133,31 +125,6 @@ const handleOfflineMode = () => {
 // Call this function when app initializes
 handleOfflineMode();
 
-import {
-    initializeApp
-} from "https://www.gstatic.com/firebasejs/11.2.0/firebase-app.js";
-import {
-    getFirestore,
-    doc,
-    getDoc,
-    collection,
-    addDoc
-} from "https://www.gstatic.com/firebasejs/11.2.0/firebase-firestore.js";
-
-// Firebase configuration
-const firebaseConfig = {
-    apiKey: "AIzaSyDpFnEoKWRQG1fXXQ282hdwjGyLCtAYWuM",
-    authDomain: "pcmi---chatbot-abfd0.firebaseapp.com",
-    projectId: "pcmi---chatbot-abfd0",
-    storageBucket: "pcmi---chatbot-abfd0.firebasestorage.app",
-    messagingSenderId: "162065597510",
-    appId: "1:162065597510:web:9c1759f6b59d2e2d9db647"
-};
-
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-const chatHistoryCollection = collection(db, "chat-history");
-
 const loadInitialState = () => {
     areFollowUpsHidden = localStorage.getItem('hideFollowUps') === 'true';
 };
@@ -245,57 +212,6 @@ const getUserIP = async () => {
         return 'unknown';
     }
 };
-
-// Update the formatFacebookLinks function in script.js
-const formatFacebookLinks = (response) => {
-    return response.replace(
-        /<a href="(https:\/\/(?:www\.)?facebook\.com\/[^"]+)"[^>]*>([^<]+)<\/a>/g,
-        '<a href="$1" target="_blank" rel="noopener noreferrer" class="facebook-link">$2</a>'
-    );
-};
-
-// Load Training-base
-const loadTrainingData = async () => {
-    try {
-        const [
-            churchKnowledgeDoc,
-            aiRulesDoc,
-            linkFormatRulesDoc,
-            conversationFlowDoc,
-            taglishVocabularyDoc
-        ] = await Promise.all([
-            getDoc(doc(db, 'training-data', 'church-knowledge')),
-            getDoc(doc(db, 'training-data', 'ai-rules')),
-            getDoc(doc(db, 'training-data', 'link-format-rules')),
-            getDoc(doc(db, 'training-data', 'conversation-flow')),
-            getDoc(doc(db, 'training-data', 'taglish-vocabulary'))
-        ]);
-
-        // Check if documents exist
-        if (!churchKnowledgeDoc.exists() ||
-            !aiRulesDoc.exists() ||
-            !linkFormatRulesDoc.exists() ||
-            !conversationFlowDoc.exists() ||
-            !taglishVocabularyDoc.exists()) {
-            throw new Error("Some training data documents are missing");
-        }
-
-        // Assign data
-        churchKnowledge = churchKnowledgeDoc.data().content;
-        aiRules = aiRulesDoc.data().content;
-        linkFormatRules = linkFormatRulesDoc.data().content;
-        conversationFlowRules = conversationFlowDoc.data().content;
-        taglishRules = taglishVocabularyDoc.data().content;
-
-        isDataLoaded = true;
-        console.log('Training data loaded successfully');
-    } catch (error) {
-        console.error('Error loading training data:', error);
-    }
-};
-
-// Call immediately
-loadTrainingData();
 
 const typingForm = document.querySelector(".typing-form");
 const chatContainer = document.querySelector(".chat-list");
@@ -402,25 +318,24 @@ const displaySuggestions = async (messageDiv, aiResponse) => {
     } else {
         // Follow-ups Suggestions Rules
         const suggestionsPrompt = `Based on the specific topic and context of your previous response: "${aiResponse}",
-            generate exactly 4 natural follow-up questions that:
-            1. Directly relate to the main topic just discussed
-            2. Follow a logical progression of the conversation
-            3. Help users explore different aspects of the same topic
-            4. Stay within the context of the current discussion
-            5. Just keep it very short, simple and straightforward as POSSIBLE.
-            6. Always provide suggestions based on the user's language input. 
-            7. When providing suggestions imagine you are the actual user that will ask questions.
-            
-        ### IMPORTANT: Always make the suggestions in lowest basic language version, straightforward, VERY SHORT SIMPLE.
+            generate exactly 4 concise follow-up questions that:
+            1. Directly relate to the main technical topic just discussed
+            2. Follow a logical progression of the developer’s workflow
+            3. Help users explore deeper insights or additional aspects of the topic
+            4. Stay within the professional context of software development and technical discussions
+            5. Use clear, precise, and straightforward language.
+            6. Adapt the suggestions to match the user's communication style and technical expertise. 
+
+        ### IMPORTANT: Ensure the suggestions are brief, highly relevant, and professional.
 
             Additional rules:
-            - Questions must be directly related to the previous response
-            - Focus on the specific subject matter being discussed
-            - Maintain conversation continuity
+            - Questions must be directly related to the previous technical response
+            - Focus on actionable insights and practical aspects relevant to developers
+            - Maintain conversation continuity within the software development domain
             - Avoid generic or unrelated topics
-            - Use the church knowledge base "${churchKnowledge}" only when contextually relevant
-            - Keep questions conversational and natural
- 
+            - Use the developer knowledge base to enhance the quality and relevance of suggestions
+            - Present questions in a logical and structured format for ease of understanding.
+
             Return only the questions, separated by |`;
 
         try {
@@ -665,18 +580,18 @@ const generateAPIResponse = async (incomingMessageDiv) => {
 
     // Add current context and rules
     const contextPrefix = ` 
-  Current Date and Time: ${getPhilippinesTime()} 
-  You are now a programming assistant with complete access to the codebase. Below is the codebase loaded from the repository:
+    Current Date and Time: ${getPhilippinesTime()} 
+    You are now a programming assistant with complete access to the codebase. Below is the codebase loaded from the repository:
 
-  ${repositoryFiles.map(file => 
-    `Filename: 
-    ${file.fileName}
-    ${file.content.substring(0, 300)}${file.content.length > 300 ? '...' : ''} 
-    -------------------------`
-  ).join('\n\n')}
+    ${repositoryFiles.map(file => 
+      `Filename: 
+      ${file.fileName}
+      ${file.content.substring(0, 300)}${file.content.length > 300 ? '...' : ''} 
+      -------------------------`
+    ).join('\n\n')}
 
-  Please provide the best answer related to the developer's question.
-`;
+    Please provide the best answer related to the developer's question.
+  `;
 
     const imageKeywords = {
         location: {
