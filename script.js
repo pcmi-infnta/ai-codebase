@@ -60,42 +60,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 });
 
-const ASSETS_TO_CACHE = [
-    '/',
-    'index.html',
-    'styles.css',
-    'script.js',
-    'manifest.json',
-    'offline.html',
-    'images/splash-android.png',
-    'images/pcmi-logo.png',
-    'images/pcmi-logo-192.png',
-    'images/pcmi-logo-512.png',
-    'images/avatars/pcmi-bot.png',
-    'images/avatars/thinking.gif',
-    'images/avatars/verified-badge.svg',
-    'images/services/church-location.png',
-    'images/services/youth-fellowship.jpg',
-    'images/services/cellgroup.jpg',
-    'images/services/sunday-service.gif',
-    'images/services/discipleship.jpg',
-    'images/prayer-warrior.jpg',
-    'images/suggestions/clock.gif',
-    'images/suggestions/location.gif',
-    'images/suggestions/connect.gif',
-    'images/suggestions/fellowship.gif'
-];
-
-const totalAssets = ASSETS_TO_CACHE.length;
-
-const updateInstallProgress = () => {
-  assetsLoaded++;
-  const progress = (assetsLoaded / totalAssets) * 100;
-  const progressBar = document.getElementById('install-progress-bar');
-  if (progressBar) {
-    progressBar.value = progress;
-  }
-};
+/*
 
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', async () => {
@@ -106,25 +71,7 @@ if ('serviceWorker' in navigator) {
       console.error('ServiceWorker registration failed: ', err);
     }
   });
-}
-
-// Add offline support to existinFirebase functions
-const handleOfflineMode = () => {
-  window.addEventListener('online', () => {
-    console.log('Back online');
-    // Sync any stored offline messages
-    syncOfflineMessages();
-  });
-
-  window.addEventListener('offline', () => {
-    console.log('Gone offline');
-    // Update UI to show offline state
-    showOfflineNotification();
-  });
-};
-
-// Call this function when app initializes
-handleOfflineMode();
+} */
 
 const loadInitialState = () => {
     areFollowUpsHidden = localStorage.getItem('hideFollowUps') === 'true';
