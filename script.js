@@ -355,15 +355,6 @@ const showTypingEffect = (text, textElement, incomingMessageDiv) => {
 
     const typingInterval = setInterval(() => {
         displayedText += (currentWordIndex === 0 ? '' : ' ') + words[currentWordIndex++];
-        // Process the entire accumulated text for bold formatting
-        let formattedText = formatFacebookLinks(displayedText)
-            .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-            .replace(/^\*(.*)/gm, '<strong>• </strong>⁠$1')
-            .replace(/\*(.*?)\*/g, '<strong>$1</strong>')
-            .replace(/— It's all about Jesus!$/, '<span class="signature">— It\'s all about Jesus!</span>');
-
-        textElement.innerHTML = formattedText;
-        incomingMessageDiv.querySelector(".icon").classList.add("hide");
 
         if (currentWordIndex === words.length) {
             clearInterval(typingInterval);
@@ -636,12 +627,7 @@ const generateAPIResponse = async (incomingMessageDiv) => {
         } else {
             showTypingEffect(finalResponse, textElement, incomingMessageDiv); // Use finalResponse here
         }
-
-        // Format Facebook links first
-        const formattedResponse = formatFacebookLinks(apiResponse)
-            .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-            .replace(/^\*(.*)/gm, '<strong>• </strong>⁠$1')
-            .replace(/\*(.*?)\*/g, '<strong>$1</strong>');
+        
 
         updateConversationHistory({
     role: "assistant",
