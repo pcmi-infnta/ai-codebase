@@ -12,6 +12,45 @@ let isDataLoaded = false;
 let displayedImages = new Set();
 let assetsLoaded = 0;
 
+// Global array for storing repository files
+let repositoryFiles = [];
+
+// Function to load the manifest and then load each file’s content
+const loadRepositoryFiles = async () => {
+  try {
+    // Fetch the manifest file that lists all repository files
+    const manifestResponse = await fetch('repository-manifest.json');
+    if (!manifestResponse.ok) throw new Error('Failed to load repository-manifest.json');
+
+    const manifestJSON = await manifestResponse.json();
+
+    // manifestJSON.files should be an array of file information
+    const files = manifestJSON.files;
+
+    // For each file in the manifest, fetch its content
+    const fileFetchPromises = files.map(async (file) => {
+      const response = await fetch(file.path);
+      if (!response.ok) throw new Error(`Failed to load ${file.path}`);
+      
+      const content = await response.text();
+
+      // Save the file data including a short preview (if desired)
+      return {
+        fileName: file.fileName,
+        content: content // you can also slice() if you want only a preview
+      };
+    });
+
+    repositoryFiles = await Promise.all(fileFetchPromises);
+    console.log('Repository files loaded:', repositoryFiles);
+  } catch (error) {
+    console.error('Error loading repository files:', error);
+  }
+};
+
+// Call immediately (or during your app initialization)
+loadRepositoryFiles();
+
 document.addEventListener('DOMContentLoaded', () => {
   const progressBar = document.getElementById('install-progress');
   if (progressBar) {  // Only add listener if element exists
@@ -625,17 +664,18 @@ const generateAPIResponse = async (incomingMessageDiv) => {
     }));
 
     // Add current context and rules
-    const contextPrefix = `
-    Current Date and Time: ${getPhilippinesTime()}
-    You are a programming assistant. Your responses must use very simple language when explaining code.
+    const contextPrefix = ` 
+  Current Date and Time: ${getPhilippinesTime()} 
+  You are now a programming assistant with complete access to the codebase. Below is the codebase loaded from the repository:
 
-    Below is the entire codebase loaded from the repository:
-    ${repositoryFiles.map(file => 
-        `Filename: ${file.fileName}
-        ${file.content.substring(0, 300)} ...`
-    ).join('\n\n')}
+  ${repositoryFiles.map(file => 
+    `Filename: 
+    ${file.fileName}
+    ${file.content.substring(0, 300)}${file.content.length > 300 ? '...' : ''} 
+    -------------------------`
+  ).join('\n\n')}
 
-    Please provide the best answer related to the developer's question. If necessary, include code snippets, explanations, and references to file names.
+  Please provide the best answer related to the developer's question.
 `;
 
     const imageKeywords = {
