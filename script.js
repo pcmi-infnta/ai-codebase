@@ -166,7 +166,7 @@ const toggleThemeButton = document.querySelector("#theme-toggle-button");
 const deleteChatButton = document.querySelector("#delete-chat-button");
 
 // API configuration
-const API_KEY = "AIzaSyC0N559LhkMH1GqrvF1Pg7cpkMmaHMZgZg"; // API key 
+const API_KEY = "<MY_API_KEY>"; // API key 
 const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${API_KEY}`;
 
 // Load theme and chat data from local storage on page load
@@ -858,17 +858,15 @@ window.addEventListener('resize', () => {
     passive: true
 });
 
-// Only handle back button
 window.addEventListener('popstate', (e) => {
     e.preventDefault();
     history.pushState(null, null, window.location.href);
 });
 
-// For Android back button
+
 if (window.navigator.userAgent.match(/Android/i)) {
     document.addEventListener('backbutton', (e) => {
         e.preventDefault();
     }, {
         passive: true
     });
-}

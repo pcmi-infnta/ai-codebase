@@ -1,0 +1,4 @@
+# .gitignore
+# /admin/
+/pcmi-twa/
+/.well-known/
